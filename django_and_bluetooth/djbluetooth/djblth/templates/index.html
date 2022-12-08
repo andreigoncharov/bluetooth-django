@@ -1,0 +1,338 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+<!--<script src="{% static 'plotly-latest.min.js' %}"></script>-->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/
+Chart.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+</head>
+<body>
+	<style>
+		.wrapper {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+		}
+		.buttons__wrap {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			grid-gap: 20px;
+		}
+		.form__field {
+			display: flex;
+			flex-direction: column;
+		}
+	</style>
+	<p style='text-align: left;'><strong>Scope</strong></p>
+<!--		<div id='myDiv'>&lt;!&ndash; Plotly chart will be drawn inside this DIV &ndash;&gt;</div>-->
+	<canvas id="workArea">
+	</canvas>
+	<hr />
+	<br />
+	<div class="wrapper">
+		<div class="log">
+			<textarea readonly="true" style="min-height:250px; min-width: 550px"></textarea>
+		</div>
+	</div>
+
+
+	<input type="button" value="BLE connect" onclick="onButtonClick_BLE_connect()"/>
+
+	<input type="button" value="Stop ALL" onclick="onButtonClick_stop()"/>
+
+<!--	<input type="button" value="Clear Graph" onclick="clear_graph()"/>-->
+
+<!--	<input type="button" value="Create" onclick="create_graph()"/>-->
+
+<!--	<input type="button" value="Add" onclick="add_value()"/>-->
+
+	</body>
+<script>
+const logArea = document.querySelector('div.log textarea');
+const log = (text) => logArea.value += text + '\r\n';
+logArea.value = ' ';
+
+let buffer = [];
+
+var data = {labels: [], datasets: []};
+var ctx = document.
+getElementById('workArea').getContext('2d');
+var chart = new Chart(ctx, {
+	type: 'line',
+	options: {
+	responsive: true,
+	elements: {
+                    point:{
+                        radius: 0
+                    }
+                },
+    legend:
+	{
+    display: false
+	},
+	scales: {
+        xAxes: [{
+            gridLines: {
+            drawBorder: false,
+                display:false
+            }
+        }],
+        yAxes: [{
+            gridLines: {
+            drawBorder: false,
+                display:false
+            }
+        }]
+    },
+	},
+	data: data,
+});
+
+function debug( str ) {
+	console.log( str );
+	log( str );
+}
+
+function clear_graph(){
+$.ajax({
+        url: "{% url 'stop_value' %}",
+        method: 'GET',
+<!--        data: {value: new_value, y : new_d},-->
+        // если успешно, то
+        success: function (response) {
+<!--        add_value(response.new_value);-->
+        },
+        // если ошибка, то
+        error: function (response) {
+            // предупредим об ошибке
+<!--            console.log(response.responseJSON.errors)-->
+        }
+    });
+try{
+	chart.data.labels.pop();
+  	chart.data.datasets[0].data.pop();
+  	chart.update();}
+  	catch (e) {
+}
+}
+
+function create_graph() {
+var dataset = {
+backgroundColor:'rgb(255, 99, 132)',
+borderColor:'rgb(255, 99, 132)',
+data: [],
+};
+
+
+
+
+var dataList= [
+	{x:0 , y:0 },
+<!--	{x:1 , y:1 },-->
+<!--	{x:2 , y:2 },-->
+<!--	{x:3 , y:3 },-->
+<!--	{x:4 , y:4 },-->
+<!--	{x:5 , y:5 },-->
+<!--	{x:6 , y:6 },-->
+<!--	{x:7 , y:7 },-->
+<!--	{x:8 , y:8 },-->
+<!--	{x:9 , y:9 },-->
+<!--	{x:10 , y:10}-->
+	];
+
+	data.labels = dataList.map(row => row.x);
+	dataset.data = dataList.map(row => row.y);
+	chart.data.datasets.push(dataset);
+	chart.update();
+	}
+
+function add_value(new_value, new_){
+<!--var dataList = chart.data.datasets[0];-->
+<!--dataList.data.push({x:11, y:15});-->
+
+try {
+   chart.data.datasets[0].data.length;
+}
+catch (e) {
+   create_graph();
+}
+
+<!--var new_ = data.labels.length;-->
+data.labels.push(new_);
+chart.data.datasets[0].data.push(new_value);
+chart.update();
+
+}
+
+
+var mode = true;
+var device = '';
+
+async function onButtonClick_stop() {
+	mode = false;
+	debug( "Close connection..." );
+	const status_disconnect = await device.gatt.disconnect();
+	debug( "OK" );
+}
+
+
+function onDisconnected( event ) {
+    // Object event.target is Bluetooth Device getting disconnected.
+    debug('> Bluetooth Device disconnected');
+}
+
+async function set_value(new_value){
+var new_d = data.labels.length;
+	$.ajax({
+        url: "{% url 'set_value' %}",
+        method: 'POST',
+        data: {value: new_value, y : new_d},
+        // если успешно, то
+        success: function (response) {
+<!--        add_value(response.new_value);-->
+        },
+        // если ошибка, то
+        error: function (response) {
+            // предупредим об ошибке
+<!--            console.log(response.responseJSON.errors)-->
+        }
+    });
+    return false;
+}
+
+function processData(n_value){
+	const MAX_SIZE = 2;
+	var value = 0;
+
+	if(value != -1){
+		let new_buffer = [];
+		if (buffer.length == MAX_SIZE+1){
+			new_buffer = [buffer[1], buffer[2], n_value];
+			buffer = new_buffer;
+		}
+		else if (buffer.length < MAX_SIZE+1){
+			buffer.push(n_value);
+		}
+		var new_value = (buffer.map(i=>x+=i, x=0).reverse()[0])/buffer.length;
+		value = Math.round(new_value);
+		try{
+			buffer[buffer.length -1] = value;
+		}
+		catch (e) { }
+		return value;
+	}
+	return 0;
+}
+
+function parseValue( value ) {
+<!--	debug(value);-->
+	const view = value;//value.buffer ? value : new DataView( value );
+
+	let filtered_value = view.getInt16( 0, true ); // filtered value S16
+	let average = processData(filtered_value);
+	set_value(average);
+<!--	add_value(average);-->
+
+
+
+	debug("Data: normal: "+ average +" not normal: "+ filtered_value +" ");
+}
+
+/* This function will be called when `readValue` resolves and
+ * characteristic value changes since `characteristicvaluechanged` event
+ * listener has been added. */
+function handleCharacteristicValueChanged( event ) {
+	var value = event.target.value;
+	parseValue( value );
+}
+
+var S, C;
+var service, characteristic;
+
+// https://github.com/WebBluetoothCG/web-bluetooth/blob/master/implementation-status.md
+// Введите chrome://flags#enable-experimental-web-platform-features в адресной строке, найдите «Web Bluetooth» и включите его (также применительно к пользователям Android 6
+// #enable-web-bluetooth-new-permissions-backend
+async function onButtonClick_BLE_connect() {
+	mode = true;
+	const DEVICE_CONTROL_SERVICE_UUID = "0b366e80-cf3a-11e1-9ab4-0002a5d5c51b";
+	const DEVICE_CONTROL_CHARACTERISTIC_UUID = "0c366e80-cf3a-11e1-9ab4-0002a5d5c51b";
+
+	const LOG_SERVICE_UUID = "01366e80-cf3a-11e1-9ab4-0002a5d5c51b";
+	const LOG_DATA_CHARACTERISTIC_UUID = "03366e80-cf3a-11e1-9ab4-0002a5d5c51b";
+
+	debug( 'Requesting Bluetooth Device...' );
+	//options.acceptAllDevices = true; //ALL ACCEPTED
+	try {
+		device = await navigator.bluetooth.requestDevice( { filters: [{ name: "SNOR" }],
+			optionalServices: [ DEVICE_CONTROL_SERVICE_UUID, LOG_SERVICE_UUID ] } );
+
+		debug( '> Name:             ' + device.name );
+		debug( '> Id:               ' + device.id );
+		debug( '> Connected:        ' + device.gatt.connected );
+
+		device.addEventListener( 'gattserverdisconnected', onDisconnected );
+
+		debug( 'Connecting to GATT Server...' );
+		const server = await device.gatt.connect();
+		debug( 'Connected:' + server.connected );
+
+		//write settings...
+		S = DEVICE_CONTROL_SERVICE_UUID;
+		debug( "Getting [" + S + "] servise..." );
+		const settings_service = await server.getPrimaryService( S );
+
+		C = DEVICE_CONTROL_CHARACTERISTIC_UUID;
+		debug( "Getting [" + C + "] characteristic..." );
+		const settings_characteristic = await settings_service.getCharacteristic( C );
+
+		debug('Calibrating ... ');
+
+		var buffer = new Uint8Array( 9 );
+		buffer[ 0 ] = 0;
+		buffer[ 1 ] = 0;
+		buffer[ 2 ] = 1; //Gain
+		buffer[ 3 ] = 0; //FilterFreq
+		buffer[ 4 ] = 0; //NoiseLvlOut
+		buffer[ 5 ] = 0; //NoiseLvlIn
+		buffer[ 6 ] = 0; //SlideAverage
+		buffer[ 7 ] = 0; //AverageMS
+		buffer[ 8 ] = 0;
+		debug( "Buffer " + buffer + " " );
+		debug( 'Writing data...' );
+		const status_write = await settings_characteristic.writeValueWithResponse( buffer );
+		debug( "Calibrating status " + status_write + " " );
+
+		//read data...
+		S = LOG_SERVICE_UUID;
+		debug( "Getting [" + S + "] servise..." );
+		data_service = await server.getPrimaryService( S );
+
+		C = LOG_DATA_CHARACTERISTIC_UUID;
+		debug( "Getting [" + C + "] haracteristic..." );
+		data_characteristic = await data_service.getCharacteristic( C );
+
+		// get our data...
+		data_characteristic.addEventListener( 'characteristicvaluechanged', handleCharacteristicValueChanged );
+		await data_characteristic.startNotifications();
+
+	} catch(error)  {
+		debug( 'Argh! ' + error );
+	}
+}
+
+setInterval(async function onButtonClick_Calibrate(){
+	$.ajax({
+        url: "{% url 'get_value' %}",
+        success: function (response) {
+        if(response.new_y != null)
+        	add_value(response.new_value, response.new_y);
+        },
+        // если ошибка, то
+        error: function (response) {
+            // предупредим об ошибке
+        }
+    });
+    return false;
+}, 200);
+</script>
+</html>
