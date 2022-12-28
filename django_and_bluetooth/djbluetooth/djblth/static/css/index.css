@@ -1,0 +1,186 @@
+/* .wrapper {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+.buttons__wrap {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-gap: 20px;
+}
+.form__field {
+    display: flex;
+    flex-direction: column;
+} */
+#headerB{
+    position: relative;
+    top: 520px;
+    left: 0px;
+    width: 100%;
+    height: 100px;
+}
+#restArea{
+    position: relative;
+    top: 5px;
+    left: 50%;
+}
+#currentUserText{
+    position: absolute;
+    top: 50px;
+}
+#user_select{
+    position: absolute;
+    top: 50px;
+    left: 110px;
+}
+#onlineSwitchDiv{
+    position: absolute;
+    top: 48px;
+    left: 190px;
+}
+#onlineSwitch{
+    width:18px;
+    height:18px;
+}
+#mode{
+    position: absolute;
+    top: 52px;
+    left: 220px;
+}
+#bars{
+    position: absolute;
+    top: 100px;
+    width: 100%;
+    height: 400px;
+}
+#barsArea{
+    position: absolute;
+    top: 0;
+    left: 0px;
+    width: 100%;
+    height: 100%;
+}
+#graphArea{
+    position: absolute;
+    top: 100px;
+    left: -2px;
+    width: 100%;
+    height: 410px;
+}
+#startRandomButton{
+    position: absolute;
+    top: 660px;
+    left: 10px;
+    width: 200px;
+    height: 40px;
+}
+#stopRandomButton{
+    position: absolute;
+    top: 660px;
+    left: 230px;
+    width: 200px;
+    height: 40px;
+}
+#resumeRandomButton{
+    position: absolute;
+    top: 710px;
+    left: 10px;
+    width: 200px;
+    height: 40px;
+}
+#clearGraphButton{
+    position: absolute;
+    top: 710px;
+    left: 230px;
+    width: 200px;
+    height: 40px;
+}
+#cyclesInfo{
+    position: absolute;
+    top: 0px;
+    left: 10px;
+}
+#apply{
+    position: absolute;
+    top: 527px;
+    left: 335px;
+    width: 120px;
+    height: 65px;
+}
+.hl{
+    border: 4px solid #0955DC;
+    width: 455px;
+    position: absolute;
+    top: 605px;
+    left: 10px;
+}
+.vl {
+    border-left: 6px solid #0955DC;
+    height: 250px;
+    position: absolute;
+    top: 510px;
+    left: 470px;
+}
+.vl1 {
+    border-left: 6px solid #0955DC;
+    height: 250px;
+    position: absolute;
+    top: 510px;
+    left: 745px;
+}
+.buttons__wrap{
+    position: absolute;
+    top: 515px;
+    left: 485px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-gap: 10px;
+}
+.form__field{
+    margin-top: 10px;
+    margin-left: 10px;
+    display: flex;
+    flex-direction: column;
+    width: 100px;
+}
+#apply_bluetooth{
+    position: absolute;
+    top: 710px;
+    left: 495px;
+    width: 220px;
+    height: 40px;
+}
+#bl_status{
+    position: absolute;
+    top: 510px;
+    left: 780px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-gap: 10px;
+}
+#bl_data{
+    position: absolute;
+    top: 555px;
+    left: 780px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-gap: 10px;
+}
+#bl_connect{
+    position: absolute;
+    top: 600px;
+    left: 780px;
+    width: 200px;
+    height: 40px;
+}
+#bl_disconnect{
+    position: absolute;
+    top: 660px;
+    left: 780px;
+    width: 200px;
+    height: 40px;
+}
+#randomCheck{
+    position: absolute;
+    top: 625px;
+    left: 10px;
+}

@@ -1,0 +1,1 @@
+Установка RethinkDb Ubuntu на 18.04 и выше (https://computingforgeeks.com/how-to-install-rethinkdb-on-ubuntu-debian/)
